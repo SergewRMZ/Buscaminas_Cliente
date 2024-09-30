@@ -1,13 +1,18 @@
 package modules.views;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import modules.views.components.CustomButton;
 
 public class Game extends javax.swing.JFrame {
     private static Game instanceGame;
@@ -33,20 +38,28 @@ public class Game extends javax.swing.JFrame {
         return instanceGame;
     }
     
-    private void createGame () {
-        JPanel tablero = new JPanel();
-        tablero.setLayout(new GridLayout(this.rows, this.cols));
-        buttons = new JButton[rows][cols];
+    private class BoardPanel extends JPanel {
+        private Image backgroundImg;
         
+        public BoardPanel(String imagePath) {
+            this.backgroundImg = new ImageIcon(getClass().getResource(imagePath)).getImage();
+        }
+        
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(this.backgroundImg, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+    
+    private void createGame () {
+        BoardPanel tablero = new BoardPanel("/resources/bg_game_easy.jpg");
+        tablero.setLayout(new GridLayout(this.rows, this.cols));
+        buttons = new CustomButton[rows][cols];
+        String imagePath = "/resources/celda_close.png";
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                buttons[i][j] = new JButton(board[i][j]);
-                buttons[i][j].setPreferredSize(new Dimension(40, 40));
-                
-                buttons[i][j].setOpaque(false);
-                buttons[i][j].setContentAreaFilled(false);
-                buttons[i][j].setBorderPainted(false);
-                
+                buttons[i][j] = new CustomButton(imagePath, 100, 100);               
                 int coordX = i;
                 int coordY = j;
                 
@@ -61,13 +74,18 @@ public class Game extends javax.swing.JFrame {
             }
         }
         
+        tablero.revalidate();
+        tablero.repaint();
+        
         JPanel panelContainer = new JPanel(new BorderLayout());
         panelContainer.setBorder(new EmptyBorder(20, 20, 20, 20)); // Margin de 20
         panelContainer.add(tablero, BorderLayout.CENTER);
+        panelContainer.repaint();
         
-        getContentPane().removeAll(); // Limpiar cualquier contenido previo
+        // getContentPane().removeAll(); // Limpiar cualquier contenido previo
         add(panelContainer, BorderLayout.CENTER);
         pack(); // Ajustar tamaño ventana
+        
         revalidate(); // Refrescar la interfaz gráfica
         repaint();
     }
@@ -75,7 +93,7 @@ public class Game extends javax.swing.JFrame {
     private void revealCell(int coordX, int coordY) {
         System.out.println("Destapar celda " + coordX + ", " + coordY);
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -86,6 +104,7 @@ public class Game extends javax.swing.JFrame {
     private void initComponents() {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(0, 0, 0));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pack();
