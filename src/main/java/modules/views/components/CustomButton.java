@@ -37,4 +37,39 @@ public class CustomButton extends JButton {
            }
         });
     }  
+    
+    public void updateCellMine () {
+        this.icon = this.loader.getImageMine();
+        setIcon(this.icon);
+    }
+    
+    public void updateCellZero () {
+        this.icon = this.loader.getImageZero();
+        setIcon(this.icon);
+    }
+    
+    public void updateCellOne () {
+        this.icon = this.loader.getImageOne();
+        setIcon(this.icon);
+    }
+    
+    public void updateCellOTwo () {
+        this.icon = this.loader.getImageTwo();
+        setIcon(this.icon);
+    }
+    
+    public void updateCellThree () {
+        this.icon = this.loader.getImageThree();
+        setIcon(this.icon);
+    }
+    
+    public void updateCellFour () {
+        this.icon = this.loader.getImageFour();
+        setIcon(this.icon);
+    }
+    
+    public void updateCellFive () {
+        this.icon = this.loader.getImageFive();
+        setIcon(this.icon);
+    }
 }

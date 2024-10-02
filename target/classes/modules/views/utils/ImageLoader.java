@@ -15,7 +15,14 @@ public class ImageLoader {
         mapIcons = new HashMap<>();
         
         String paths[] = {
-            "/resources/celda_close.png"
+            "/resources/celda_close.png",
+            "/resources/abierta.png",
+            "/resources/1.png",
+            "/resources/2.png",
+            "/resources/3.png",
+            "/resources/4.png",
+            "/resources/5.png",
+            "/resources/bomba.png"
         };
         
         for (String path : paths) {
@@ -48,6 +55,34 @@ public class ImageLoader {
     
     public Icon getImageClosedCell () {
         return mapIcons.get("/resources/celda_close.png");
+    }
+    
+    public Icon getImageMine () {
+        return mapIcons.get("/resources/bomba.png");
+    }
+    
+    public Icon getImageZero () {
+        return mapIcons.get("/resources/abierta.png");
+    }
+    
+    public Icon getImageOne () {
+        return mapIcons.get("/resources/1.png");
+    }
+    
+    public Icon getImageTwo () {
+        return mapIcons.get("/resources/2.png");
+    }
+    
+    public Icon getImageThree () {
+        return mapIcons.get("/resources/3.png");
+    }
+    
+    public Icon getImageFour () {
+        return mapIcons.get("/resources/4.png");
+    }
+    
+    public Icon getImageFive () {
+        return mapIcons.get("/resources/5.png");
     }
     
     public Icon getImage(String path) {

@@ -23,12 +23,13 @@ import modules.views.components.CustomButton;
 public class Game extends javax.swing.JFrame {
     private static Game instanceGame;
     private String[][] board;
-    private JButton[][] buttons;
+    private CustomButton[][] buttons;
     private int rows;
     private int cols;
     
     private String gameEasyBgPath = "/resources/bg_game_easy.jpg";
     
+    private BoardPanel tablero;
     private JLabel clockLabel; // Etiqueta para mostrar el reloj.
     private Timer timer; // Temporizador.
     private int timeElapsed;
@@ -67,7 +68,7 @@ public class Game extends javax.swing.JFrame {
     
     /** Función para generar el tablero del juego. */
     private void createGame () {
-        BoardPanel tablero = new BoardPanel(this.gameEasyBgPath);
+        tablero = new BoardPanel(this.gameEasyBgPath);
         tablero.setLayout(new GridLayout(this.rows, this.cols));
         buttons = new CustomButton[rows][cols];
                 
@@ -138,20 +139,49 @@ public class Game extends javax.swing.JFrame {
         String jsonResponse = socketClient.sendMessageRevealCell(coordX, coordY); //Solicita datos al cliente.
         this.board = socketClient.getBoardJSON(jsonResponse);
         
-        /* En this.board ya tienes el tablero actualizado, ahora harás un for
-        para iterar entre las celdas e ir actualizando las imágenes
-        
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                if (this.board[i][j] == 1) {
-                    poner imagen de celda 1
+                if (!board[i][j].equals("-")) {
+                    Integer cellValue = Integer.parseInt(this.board[i][j].toString());
+                
+                    switch (cellValue) {
+                        case -1:
+                            this.buttons[i][j].updateCellMine();
+                            break;
+                            
+                        case 0:
+                            this.buttons[i][j].updateCellZero();
+                            break;
+                            
+                        case 1:
+                            this.buttons[i][j].updateCellOne();
+                            break;
+
+                        case 2:
+                            this.buttons[i][j].updateCellOTwo();
+                            break;
+
+                        case 3:
+                            this.buttons[i][j].updateCellThree();
+                            break;
+
+                        case 4:
+                            this.buttons[i][j].updateCellFour();
+                            break;
+
+                        case 5:
+                            this.buttons[i][j].updateCellFive();
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
-        
-            else if (this.board[i][j] == 2) poner imagen de 2
-            else if (this.board[i][j] == -1) imagen de bomba
-            else deja la imagen default
             }
-        }*/
+        }
+        
+        tablero.revalidate();
+        tablero.repaint();
     }
     
     /**
