@@ -20,6 +20,9 @@ public class Game extends javax.swing.JFrame {
     private JButton[][] buttons;
     private int rows;
     private int cols;
+
+	private String Bomba = "/resources/bomba.png";
+    private String Abierta = "/resources/abierta.png";
     
     private Game(String[][] board) {
         this.board = board;
@@ -91,7 +94,24 @@ public class Game extends javax.swing.JFrame {
     }
     
     private void revealCell(int coordX, int coordY) {
-        System.out.println("Destapar celda " + coordX + ", " + coordY);
+        ImageIcon icon;
+        if (board[coordX][coordY].equals("-1")) {
+            icon = new ImageIcon(getClass().getResource(Bomba));
+            System.out.println("Celda con mina en " + coordX + ", " + coordY);
+        } else if (board[coordX][coordY].equals("0")) {
+            icon = new ImageIcon(getClass().getResource(Abierta));
+            System.out.println("Celda abierta en " + coordX + ", " + coordY);
+        } else {
+            //Los números
+        }
+
+          //Redimensionar imagen a la celda
+        Image img = icon.getImage().getScaledInstance(buttons[coordX][coordY].getWidth(), buttons[coordX][coordY].getHeight(), Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
+        buttons[coordX][coordY].setIcon(icon);
+
+        // Desactivar el botón para que no se pueda hacer clic de nuevo
+        buttons[coordX][coordY].setEnabled(false);
     }
     
     /**
