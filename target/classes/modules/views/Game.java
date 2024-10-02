@@ -5,9 +5,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,9 +28,6 @@ public class Game extends javax.swing.JFrame {
     private int cols;
     
     private String gameEasyBgPath = "/resources/bg_game_easy.jpg";
-    private String celdaClosePath = "/resources/celda_close.png";
-    private String Bomba = "/resources/bomba.png";
-    private String Abierta = "/resources/abierta.png";
     
     private JLabel clockLabel; // Etiqueta para mostrar el reloj.
     private Timer timer; // Temporizador.
@@ -71,11 +70,10 @@ public class Game extends javax.swing.JFrame {
         BoardPanel tablero = new BoardPanel(this.gameEasyBgPath);
         tablero.setLayout(new GridLayout(this.rows, this.cols));
         buttons = new CustomButton[rows][cols];
-        String imagePath = this.celdaClosePath;
-        
+                
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                buttons[i][j] = new CustomButton(imagePath, 100, 100);               
+                buttons[i][j] = new CustomButton(100, 100);               
                 int coordX = i;
                 int coordY = j;
                 
@@ -92,6 +90,8 @@ public class Game extends javax.swing.JFrame {
         
         tablero.revalidate();
         tablero.repaint();
+        
+        
         JPanel panelContainer = new JPanel(new BorderLayout());
         panelContainer.setBorder(new EmptyBorder(20, 20, 20, 20)); // Margin de 20
         panelContainer.add(tablero, BorderLayout.CENTER);
@@ -106,7 +106,7 @@ public class Game extends javax.swing.JFrame {
         panelContainer.add(clockPanel, BorderLayout.EAST);
         panelContainer.repaint();
         
-        // getContentPane().removeAll(); // Limpiar cualquier contenido previo
+        getContentPane().removeAll(); // Limpiar cualquier contenido previo
         add(panelContainer, BorderLayout.CENTER);
         pack(); // Ajustar tamaño ventana
         

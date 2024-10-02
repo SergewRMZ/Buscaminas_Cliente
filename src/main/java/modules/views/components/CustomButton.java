@@ -13,10 +13,12 @@ import modules.views.utils.Colors;
 public class CustomButton extends JButton {
     private Icon icon;
     private boolean pressed;
+    private ImageLoader loader; // Instancia del cargador de imágenes
     
-    public CustomButton (String imagePath, int width, int height) {
+    public CustomButton (int width, int height) {
         this.setPreferredSize(new Dimension(width, height));
-        this.icon = ImageLoader.setImageLabel(imagePath, width, height);
+        this.loader = ImageLoader.getIntanceImageLoader(width, height);
+        this.icon = this.loader.getImageClosedCell();
         
         setIcon(this.icon);
         setContentAreaFilled(false);
@@ -24,7 +26,7 @@ public class CustomButton extends JButton {
         
         addMouseListener(new MouseAdapter() {
            
-            @Override
+           @Override
            public void mouseEntered(MouseEvent e) {
                setBorder(BorderFactory.createLineBorder(Colors.PURPLE));
            }
