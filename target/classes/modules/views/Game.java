@@ -1,17 +1,21 @@
 package modules.views;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
+import modules.game.Client;
 import modules.views.components.CustomButton;
 
 public class Game extends javax.swing.JFrame {
@@ -21,26 +25,36 @@ public class Game extends javax.swing.JFrame {
     private int rows;
     private int cols;
     
+    private String gameEasyBgPath = "/resources/bg_game_easy.jpg";
+    private String celdaClosePath = "/resources/celda_close.png";
+    private String Bomba = "/resources/bomba.png";
+    private String Abierta = "/resources/abierta.png";
+    
+    private JLabel clockLabel; // Etiqueta para mostrar el reloj.
+    private Timer timer; // Temporizador.
+    private int timeElapsed;
+    
     private Game(String[][] board) {
         this.board = board;
         this.rows = board.length;
         this.cols = board[0].length;
+        this.timeElapsed = 0;
         createGame();
         setLocationRelativeTo(null);
         setVisible(true);
+        startClock();
     }
         
     public static Game getInstanceGame (String[][] board) {
         if (instanceGame == null) {
             instanceGame = new Game(board);
         }
-        
         return instanceGame;
     }
     
+    /** Clase que hereda de JPanel para establecer una imagen de fondo para el juego. */
     private class BoardPanel extends JPanel {
         private Image backgroundImg;
-        
         public BoardPanel(String imagePath) {
             this.backgroundImg = new ImageIcon(getClass().getResource(imagePath)).getImage();
         }
@@ -52,11 +66,13 @@ public class Game extends javax.swing.JFrame {
         }
     }
     
+    /** Función para generar el tablero del juego. */
     private void createGame () {
-        BoardPanel tablero = new BoardPanel("/resources/bg_game_easy.jpg");
+        BoardPanel tablero = new BoardPanel(this.gameEasyBgPath);
         tablero.setLayout(new GridLayout(this.rows, this.cols));
         buttons = new CustomButton[rows][cols];
-        String imagePath = "/resources/celda_close.png";
+        String imagePath = this.celdaClosePath;
+        
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
                 buttons[i][j] = new CustomButton(imagePath, 100, 100);               
@@ -76,10 +92,18 @@ public class Game extends javax.swing.JFrame {
         
         tablero.revalidate();
         tablero.repaint();
-        
         JPanel panelContainer = new JPanel(new BorderLayout());
         panelContainer.setBorder(new EmptyBorder(20, 20, 20, 20)); // Margin de 20
         panelContainer.add(tablero, BorderLayout.CENTER);
+        
+        // Diseño del cronómetro
+        JPanel clockPanel = new JPanel();
+        clockLabel = new JLabel();
+        clockLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        clockPanel.add(this.clockLabel);
+        
+        // Agregar clockPanel
+        panelContainer.add(clockPanel, BorderLayout.EAST);
         panelContainer.repaint();
         
         // getContentPane().removeAll(); // Limpiar cualquier contenido previo
@@ -90,8 +114,44 @@ public class Game extends javax.swing.JFrame {
         repaint();
     }
     
+    /** Método para iniciar el cronómetro. */
+    private void startClock() {
+        timer = new Timer(1000, new ActionListener() { // Crear un temporizador que se dispara cada segundo
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timeElapsed++;
+                updateClock(); // Actualizar el reloj
+            }
+        });
+        timer.start(); // Iniciar el temporizador
+    }
+
+    /** Método para actualizar la etiqueta del reloj. */
+    private void updateClock() {
+        this.clockLabel.setText("Tiempo: " + timeElapsed);
+    }
+    
+    /** Método para revelar una celda del juego, se manda la solicitud al servidor y
+     regresa la respuesta como JSON. */
     private void revealCell(int coordX, int coordY) {
-        System.out.println("Destapar celda " + coordX + ", " + coordY);
+        Client socketClient = Client.getInstanceClient();// Obtener la instancia de cliente.
+        String jsonResponse = socketClient.sendMessageRevealCell(coordX, coordY); //Solicita datos al cliente.
+        this.board = socketClient.getBoardJSON(jsonResponse);
+        
+        /* En this.board ya tienes el tablero actualizado, ahora harás un for
+        para iterar entre las celdas e ir actualizando las imágenes
+        
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                if (this.board[i][j] == 1) {
+                    poner imagen de celda 1
+                }
+        
+            else if (this.board[i][j] == 2) poner imagen de 2
+            else if (this.board[i][j] == -1) imagen de bomba
+            else deja la imagen default
+            }
+        }*/
     }
     
     /**

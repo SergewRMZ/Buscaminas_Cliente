@@ -125,44 +125,21 @@ public class Index extends javax.swing.JFrame {
             BtnStartGame.setEnabled(false); // Deshabilitar el botón si no hay selección
         
     }//GEN-LAST:event_comboBoxDifficultyActionPerformed
-
+    
     private void BtnStartGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnStartGameActionPerformed
-        // TODO add your handling code here:
-        String selectedDifficulty = (String) comboBoxDifficulty.getSelectedItem();
-        
-        Client socketClient = new Client();
+        String selectedDifficulty = (String) comboBoxDifficulty.getSelectedItem();        
+        Client socketClient = Client.getInstanceClient();
         socketClient.connect();
         String jsonResponse = socketClient.sendMessageInitGame(selectedDifficulty);
-        System.out.println("Response del servidor: " + jsonResponse);
-        if (jsonResponse != null) {
-            JsonObject jsonObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
-            JsonArray jsonBoard = jsonObject.getAsJsonArray("board");
-            System.out.println(jsonBoard);
-            
-            String [][] board = new String[jsonBoard.size()][]; // Crear el tablero
-            
-            for (int i = 0; i < jsonBoard.size(); i++) {
-                JsonArray row = jsonBoard.get(i).getAsJsonArray(); // Obtener la fila como un array
-                board[i] = new String[row.size()];
-                for (int j = 0; j < row.size(); j++) {
-                    board[i][j] = row.get(j).getAsString(); // Obtener los enteros.
-                }
-            }
-            
-            System.out.println("Tablero obtenido: ");
-            for (int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    System.out.print(board[i][j]);
-                }
-                
-                System.out.println();
-            }
-            
+        String board[][] = Client.getInstanceClient().getBoardJSON(jsonResponse);
+        
+        if (board!= null) {
             Game.getInstanceGame(board);
             this.setVisible(false);
-        }        
+        }    
     }//GEN-LAST:event_BtnStartGameActionPerformed
-
+    
+    /* Método para obtener el tablero que viene en la response del servidor */
     /**
      * @param args the command line arguments
      */

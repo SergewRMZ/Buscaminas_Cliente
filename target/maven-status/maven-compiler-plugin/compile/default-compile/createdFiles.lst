@@ -8,6 +8,7 @@ modules\views\Index$3.class
 modules\views\utils\Colors.class
 modules\views\Game.class
 modules\views\utils\ImageLoader.class
+modules\views\Game$2.class
 modules\views\Game$BoardPanel.class
 modules\views\MainFrame.class
 modules\views\Index$2.class

@@ -2,8 +2,12 @@ package modules.game;
 import java.io.*;
 import java.net.*;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-public class Client {
+public class Client {   
+    private static Client instance;
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
@@ -11,8 +15,15 @@ public class Client {
     private final String host = "127.0.0.1";
     private Gson gson;
     
-    public Client () { 
+    private Client () { 
         this.gson = new Gson();
+    }
+    
+    public static Client getInstanceClient () {
+        if (instance == null) {
+            instance = new Client();
+        }
+        return instance;
     }
     
     public void connect () {
@@ -43,16 +54,53 @@ public class Client {
         return null;
     }
     
-    public void sendMessageRevealCell (int row, int col) {
+    /** Método para mandar una petición al servidor para revelar la celda con base
+     * en la celda presionada 
+     * @params int row, col: Fila y columna de la celda
+     * @return response: Respuesta JSON del servidor. */
+    public String sendMessageRevealCell (int row, int col) {
         ActionMessage revealMessage = new ActionMessage("reveal", row, col);
         String jsonReveal = gson.toJson(revealMessage);
         out.println(jsonReveal);
         
         try {
             String response = in.readLine();
-            System.out.println(response);
+            return response;
         } catch (IOException e) {
             System.err.println("Error al recibir la respuesta del servidor: " + e.getMessage());
         }
+        return null;
+    }
+    
+    /** Función para convertir el json del tablero en un arreglo bidimensional.
+     * @param jsonResponse: La respuesta del servidor al solicitar revelación de una celda 
+     * @return Un arreglo bidimensional que contiene el tablero.*/
+    public String[][] getBoardJSON (String jsonResponse) {
+        if (jsonResponse != null) {
+            JsonObject jsonObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
+            JsonArray jsonBoard = jsonObject.getAsJsonArray("board");
+            String [][] board = new String[jsonBoard.size()][]; // Crear el tablero
+            
+            for (int i = 0; i < jsonBoard.size(); i++) {
+                JsonArray row = jsonBoard.get(i).getAsJsonArray(); // Obtener la fila como un array
+                board[i] = new String[row.size()];
+                for (int j = 0; j < row.size(); j++) {
+                    board[i][j] = row.get(j).getAsString(); // Obtener los enteros.
+                }
+            }
+            
+            System.out.println("Tablero obtenido: ");
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    System.out.print(board[i][j]);
+                }
+                
+                System.out.println();
+            }
+            
+            return board;
+        }
+        
+        return null;
     }
 }
