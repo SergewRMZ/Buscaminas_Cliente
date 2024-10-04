@@ -53,7 +53,7 @@ public class CustomButton extends JButton {
         setIcon(this.icon);
     }
     
-    public void updateCellOTwo () {
+    public void updateCellTwo () {
         this.icon = this.loader.getImageTwo();
         setIcon(this.icon);
     }

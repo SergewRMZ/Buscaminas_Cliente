@@ -1,5 +1,6 @@
 package modules.views;
 
+import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -27,7 +28,10 @@ public class Game extends javax.swing.JFrame {
     private int rows;
     private int cols;
     
+
     private String gameEasyBgPath = "/resources/bg_game_easy.jpg";
+    private String win = "/resources/win.jpg";
+    private String crono = "/resources/cronometer.png"; 
     
     private BoardPanel tablero;
     private JLabel clockLabel; // Etiqueta para mostrar el reloj.
@@ -39,6 +43,11 @@ public class Game extends javax.swing.JFrame {
         this.rows = board.length;
         this.cols = board[0].length;
         this.timeElapsed = 0;
+        
+        // Establecer el color del marco
+        setUndecorated(false); 
+        getRootPane().setBorder(javax.swing.BorderFactory.createLineBorder(Color.BLACK, 20));
+        
         createGame();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -96,21 +105,40 @@ public class Game extends javax.swing.JFrame {
         JPanel panelContainer = new JPanel(new BorderLayout());
         panelContainer.setBorder(new EmptyBorder(20, 20, 20, 20)); // Margin de 20
         panelContainer.add(tablero, BorderLayout.CENTER);
+
+        // Diseño del cronómetro calabaza
+        JPanel clockPanel = new JPanel(new BorderLayout());  
+        ImageIcon pumpkinIcon = new ImageIcon(getClass().getResource(crono));
+        Image pumpkinImage = pumpkinIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);  
+        JLabel clockImageLabel = new JLabel(new ImageIcon(pumpkinImage)); // Nueva imagen redimensionada
+
+        // Establecer el alineamiento del JLabel de la imagen
+        clockImageLabel.setHorizontalAlignment(JLabel.CENTER);
+        clockImageLabel.setVerticalAlignment(JLabel.TOP);
         
-        // Diseño del cronómetro
-        JPanel clockPanel = new JPanel();
+        // Crear un JPanel transparente para el tiempo digital
+        JPanel overlayPanel = new JPanel();
+        overlayPanel.setOpaque(false); 
+        overlayPanel.setLayout(new BorderLayout()); 
+
+        // Configurar el JLabel del tiempo
         clockLabel = new JLabel();
-        clockLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        clockPanel.add(this.clockLabel);
+        clockLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        clockLabel.setHorizontalAlignment(JLabel.CENTER);
+        clockLabel.setBorder(new EmptyBorder(150, 30, 30, 30)); 
+        overlayPanel.add(clockLabel, BorderLayout.NORTH);
         
-        // Agregar clockPanel
-        panelContainer.add(clockPanel, BorderLayout.EAST);
-        panelContainer.repaint();
-        
+        // Añadir el overlayPanel sobre la imagen del reloj
+        clockImageLabel.setLayout(new BorderLayout()); 
+        clockImageLabel.add(overlayPanel, BorderLayout.CENTER);
+                
+        panelContainer.add(clockImageLabel, BorderLayout.EAST);
+
+        // Limpiar y añadir el nuevo contenido
         getContentPane().removeAll(); // Limpiar cualquier contenido previo
-        add(panelContainer, BorderLayout.CENTER);
+        add(panelContainer, BorderLayout.NORTH);
         pack(); // Ajustar tamaño ventana
-        
+
         revalidate(); // Refrescar la interfaz gráfica
         repaint();
     }
@@ -129,12 +157,19 @@ public class Game extends javax.swing.JFrame {
 
     /** Método para actualizar la etiqueta del reloj. */
     private void updateClock() {
-        this.clockLabel.setText("Tiempo: " + timeElapsed);
-    }
+    int minutes = timeElapsed / 60;
+    int seconds = timeElapsed % 60;
+
+    // Tiempo en formato MM:SS
+    String formattedTime = String.format("%02d:%02d", minutes, seconds);
+    this.clockLabel.setText(formattedTime);
+}
     
     /** Método para revelar una celda del juego, se manda la solicitud al servidor y
      regresa la respuesta como JSON. */
     private void revealCell(int coordX, int coordY) {
+        // Desactivar el botón para que no se pueda hacer clic de nuevo
+        buttons[coordX][coordY].setEnabled(false);
         Client socketClient = Client.getInstanceClient();// Obtener la instancia de cliente.
         String jsonResponse = socketClient.sendMessageRevealCell(coordX, coordY); //Solicita datos al cliente.
         this.board = socketClient.getBoardJSON(jsonResponse);
@@ -158,7 +193,7 @@ public class Game extends javax.swing.JFrame {
                             break;
 
                         case 2:
-                            this.buttons[i][j].updateCellOTwo();
+                            this.buttons[i][j].updateCellTwo();
                             break;
 
                         case 3:
@@ -180,10 +215,22 @@ public class Game extends javax.swing.JFrame {
             }
         }
         
+        if (socketClient.getWin(jsonResponse)) {
+            // Mostrar ventana de que ha ganado
+            System.out.println("Has ganado!");
+        }
+        
+        else if (socketClient.getLose(jsonResponse)) {
+            // Mostrar ventana de que has perdido
+            System.out.println("Has perdido menso!");
+        }
+        
         tablero.revalidate();
         tablero.repaint();
     }
     
+    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

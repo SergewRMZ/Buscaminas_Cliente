@@ -7,22 +7,55 @@ package modules.views;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import modules.game.Client;
 
 public class Index extends javax.swing.JFrame {
     private static Index instance;
+    private String logo = "/resources/index.png"; 
+    
     private Index() {
         initComponents();
         setLocationRelativeTo(null);
         setImageLabel(FondoLabel, "/resources/bg.jpg");
+        
+        
+        ImageIcon logoIcon = new ImageIcon(getClass().getResource(logo));
+        if (logoIcon.getIconWidth() == -1) {
+            System.err.println("Error: No se puede cargar la imagen desde la ruta: " + logo);
+        } else {
+            // Obtener las dimensiones originales de la imagen
+            int originalWidth = logoIcon.getIconWidth();
+            int originalHeight = logoIcon.getIconHeight();
+            
+            int newWidth = 450; 
+            int newHeight = (int) ((double) originalHeight / originalWidth * newWidth); // Calcular la altura manteniendo la relación
+
+            // Redimensionar la imagen
+            Image logoImage = logoIcon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            JLabel logoLabel = new JLabel(new ImageIcon(logoImage)); // Crear el JLabel con la imagen redimensionada
+
+            // Establecer la posición del logo
+            logoLabel.setBounds(30, 60, newWidth, newHeight); // Usar las nuevas dimensiones
+
+            // Añadir el logo sobre el FondoLabel
+            FondoLabel.add(logoLabel);
+        }
+
+
+        // Refrescar la interfaz
+        revalidate(); // Refresca el diseño
+        repaint(); // Repinta la ventana
     }
     
+     
     public static Index getInstanceIndex () {
         if (instance == null) {
             instance = new Index();
@@ -106,17 +139,6 @@ public class Index extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void comboBoxDifficultyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxDifficultyActionPerformed
-        // TODO add your handling code here:
-        
-        String selectedDifficulty = (String) comboBoxDifficulty.getSelectedItem();
-        if (selectedDifficulty != null && !selectedDifficulty.isEmpty() && !selectedDifficulty.contains("Selected Mode"))
-            BtnStartGame.setEnabled(true); // Habilitar el botón
-        else 
-            BtnStartGame.setEnabled(false); // Deshabilitar el botón si no hay selección
-        
-    }//GEN-LAST:event_comboBoxDifficultyActionPerformed
     
     private void BtnStartGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnStartGameActionPerformed
         String selectedDifficulty = (String) comboBoxDifficulty.getSelectedItem();        
@@ -130,6 +152,17 @@ public class Index extends javax.swing.JFrame {
             this.setVisible(false);
         }    
     }//GEN-LAST:event_BtnStartGameActionPerformed
+
+    private void comboBoxDifficultyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxDifficultyActionPerformed
+        // TODO add your handling code here:
+
+        String selectedDifficulty = (String) comboBoxDifficulty.getSelectedItem();
+        if (selectedDifficulty != null && !selectedDifficulty.isEmpty() && !selectedDifficulty.contains("Selected Mode"))
+        BtnStartGame.setEnabled(true); // Habilitar el botón
+        else
+        BtnStartGame.setEnabled(false); // Deshabilitar el botón si no hay selección
+
+    }//GEN-LAST:event_comboBoxDifficultyActionPerformed
     
     /* Método para obtener el tablero que viene en la response del servidor */
     /**

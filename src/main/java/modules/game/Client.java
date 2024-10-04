@@ -103,4 +103,28 @@ public class Client {
         
         return null;
     }
+    
+    /** Función para obtener el win del json si es que el usuario ha ganado.
+     * @params jsonResponse: La respuesta del servidor al destapar una celda. */
+    public boolean getWin (String jsonResponse) {
+        if (jsonResponse != null) {
+            JsonObject jsonObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
+            if (jsonObject.has("win")) {
+                return jsonObject.get("win").getAsBoolean();
+            }
+        }
+        
+        return false;
+    }
+    
+    public boolean getLose (String jsonResponse) {
+        if (jsonResponse != null) {
+            JsonObject jsonObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
+            if (jsonObject.has("lose")) {
+                return jsonObject.get("lose").getAsBoolean();
+            }
+        }
+        
+        return false; 
+    }
 }
