@@ -2,6 +2,8 @@ package modules.views;
 
 import java.awt.Color;
 import java.awt.BorderLayout;
+import javax.swing.BoxLayout;
+import javax.swing.Box;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -32,6 +34,7 @@ public class Game extends javax.swing.JFrame {
     private String gameEasyBgPath = "/resources/bg_game_easy.jpg";
     private String win = "/resources/win.jpg";
     private String crono = "/resources/cronometer.png"; 
+    private String score = "/resources/score.png"; 
     
     private BoardPanel tablero;
     private JLabel clockLabel; // Etiqueta para mostrar el reloj.
@@ -96,50 +99,67 @@ public class Game extends javax.swing.JFrame {
                 
                 tablero.add(buttons[i][j]);
             }
-        }
-        
-        tablero.revalidate();
-        tablero.repaint();
-        
+        }        
         
         JPanel panelContainer = new JPanel(new BorderLayout());
-        panelContainer.setBorder(new EmptyBorder(20, 20, 20, 20)); // Margin de 20
+        panelContainer.setBorder(new EmptyBorder(20, 20, 20, 0)); // Margin de 20
         panelContainer.add(tablero, BorderLayout.CENTER);
 
         // Diseño del cronómetro calabaza
-        JPanel clockPanel = new JPanel(new BorderLayout());  
+        JPanel clockPanel = new JPanel(new BorderLayout());
         ImageIcon pumpkinIcon = new ImageIcon(getClass().getResource(crono));
-        Image pumpkinImage = pumpkinIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);  
+        Image pumpkinImage = pumpkinIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
         JLabel clockImageLabel = new JLabel(new ImageIcon(pumpkinImage)); // Nueva imagen redimensionada
 
         // Establecer el alineamiento del JLabel de la imagen
         clockImageLabel.setHorizontalAlignment(JLabel.CENTER);
         clockImageLabel.setVerticalAlignment(JLabel.TOP);
-        
+
         // Crear un JPanel transparente para el tiempo digital
         JPanel overlayPanel = new JPanel();
-        overlayPanel.setOpaque(false); 
-        overlayPanel.setLayout(new BorderLayout()); 
+        overlayPanel.setOpaque(false);
+        overlayPanel.setLayout(new BorderLayout());
 
         // Configurar el JLabel del tiempo
         clockLabel = new JLabel();
         clockLabel.setFont(new Font("Arial", Font.BOLD, 40));
         clockLabel.setHorizontalAlignment(JLabel.CENTER);
-        clockLabel.setBorder(new EmptyBorder(150, 30, 30, 30)); 
+        clockLabel.setBorder(new EmptyBorder(150, 30, 30, 30));
         overlayPanel.add(clockLabel, BorderLayout.NORTH);
-        
+
         // Añadir el overlayPanel sobre la imagen del reloj
-        clockImageLabel.setLayout(new BorderLayout()); 
+        clockImageLabel.setLayout(new BorderLayout());
         clockImageLabel.add(overlayPanel, BorderLayout.CENTER);
-                
-        panelContainer.add(clockImageLabel, BorderLayout.EAST);
+
+        // Crear el score y añadirlo debajo del cronómetro
+        ImageIcon scoreIcon = new ImageIcon(getClass().getResource(score));
+        Image scoreImage = scoreIcon.getImage().getScaledInstance(300, 500, Image.SCALE_SMOOTH); 
+        JLabel scoreImageLabel = new JLabel(new ImageIcon(scoreImage));
+        scoreImageLabel.setBorder(null);
+
+        JPanel clockAndScorePanel = new JPanel();
+        clockAndScorePanel.setLayout(new BoxLayout(clockAndScorePanel, BoxLayout.Y_AXIS));
+        clockAndScorePanel.add(clockImageLabel);
+        clockAndScorePanel.add(Box.createVerticalStrut(3)); 
+        clockAndScorePanel.add(scoreImageLabel);
+
+        // Añadir el panel que contiene el cronómetro y el score al contenedor principal
+        panelContainer.add(clockAndScorePanel, BorderLayout.EAST);
+
+        
+        /*Crear JPanel transparente para el Score
+        JPanel ScorePanel = new JPanel();
+        ScorePanel.setOpaque(false); 
+        ScorePanel.setLayout(new BorderLayout()); */
+        
+        
 
         // Limpiar y añadir el nuevo contenido
         getContentPane().removeAll(); // Limpiar cualquier contenido previo
         add(panelContainer, BorderLayout.NORTH);
         pack(); // Ajustar tamaño ventana
 
-        revalidate(); // Refrescar la interfaz gráfica
+        revalidate(); 
         repaint();
     }
     
@@ -218,16 +238,41 @@ public class Game extends javax.swing.JFrame {
         if (socketClient.getWin(jsonResponse)) {
             // Mostrar ventana de que ha ganado
             System.out.println("Has ganado!");
+            this.dispose();
+            WinScreen winScreen = new WinScreen();
+            winScreen.setVisible(true);
         }
         
         else if (socketClient.getLose(jsonResponse)) {
             // Mostrar ventana de que has perdido
             System.out.println("Has perdido menso!");
+            //showLoseImage();
         }
         
         tablero.revalidate();
         tablero.repaint();
     }
+    
+    private void showLoseImage() {
+        // Crear un JLabel para mostrar la imagen de pérdida
+        JLabel loseLabel = new JLabel();
+        loseLabel.setIcon(new ImageIcon(getClass().getResource("/resources/lose.png"))); 
+        loseLabel.setHorizontalAlignment(JLabel.CENTER); 
+        loseLabel.setVerticalAlignment(JLabel.CENTER); 
+        loseLabel.setBounds(0, 0, getWidth(), getHeight()); 
+
+        // Crear un panel transparente para agregar la imagen
+        JPanel losePanel = new JPanel();
+        losePanel.setLayout(null); 
+        losePanel.setOpaque(false); 
+        losePanel.setBounds(0, 0, getWidth(), getHeight());
+        losePanel.add(loseLabel);
+        getContentPane().add(losePanel);
+
+        revalidate();
+        repaint();
+    }
+
     
     
 

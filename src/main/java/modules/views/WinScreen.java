@@ -11,23 +11,37 @@ import java.awt.*;
  *
  * @author Ale
  */
-public class WinScreen extends JFrame{
+public class WinScreen extends javax.swing.JFrame{
+    private static WinScreen WinGame;
     public WinScreen() {
-        setSize(600, 400); 
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
+        setImageLabel(FondoLabel, "/resources/bg.jpg");
+    }
+    
+    public static WinScreen getInstanceWin () {
+        if (WinGame == null) {
+            WinGame = new WinScreen();
+        }
+        return WinGame;
+    }
+    
+    private void setImageLabel(JLabel label, String root) {
+        ImageIcon imageIcon = new ImageIcon(getClass().getResource(root));
 
-        // Crear un panel para la imagen de victoria
-        JPanel panel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                ImageIcon winImage = new ImageIcon(getClass().getResource("/resources/win.jpg"));
-                g.drawImage(winImage.getImage(), 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-        add(panel);
-        setVisible(true);
-    } 
+        if (imageIcon.getIconWidth() == -1) {
+            System.err.println("Error: la imagen no se pudo cargar desde la ruta: " + root);
+        } else {
+
+            // Escalar la imagen al tamaño del JLabel
+            Image image = imageIcon.getImage();
+            Image scaledImage = image.getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
+
+            Icon icon = new ImageIcon(scaledImage);
+            label.setIcon(icon);
+            label.repaint(); // Repinta el JLabel para mostrar la nueva imagen
+        }
+    }
+    
+    private javax.swing.JLabel FondoLabel;
 }
+

@@ -91,18 +91,16 @@ public class Index extends javax.swing.JFrame {
 
         BtnStartGame = new javax.swing.JButton();
         comboBoxDifficulty = new javax.swing.JComboBox<>();
-        TittleLabel = new javax.swing.JLabel();
         FondoLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(500, 500));
         setName("Index"); // NOI18N
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BtnStartGame.setBackground(new java.awt.Color(51, 153, 255));
-        BtnStartGame.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
+        BtnStartGame.setBackground(new java.awt.Color(102, 102, 102));
+        BtnStartGame.setFont(new java.awt.Font("Chiller", 3, 48)); // NOI18N
         BtnStartGame.setForeground(new java.awt.Color(255, 255, 255));
-        BtnStartGame.setText("Jugar");
+        BtnStartGame.setText("Start\n");
         BtnStartGame.setBorder(null);
         BtnStartGame.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BtnStartGame.setEnabled(false);
@@ -112,29 +110,18 @@ public class Index extends javax.swing.JFrame {
                 BtnStartGameActionPerformed(evt);
             }
         });
-        getContentPane().add(BtnStartGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 410, 150, 40));
+        getContentPane().add(BtnStartGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 350, 180, 40));
 
-        comboBoxDifficulty.setBackground(new java.awt.Color(255, 255, 255));
-        comboBoxDifficulty.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
-        comboBoxDifficulty.setForeground(new java.awt.Color(0, 0, 0));
-        comboBoxDifficulty.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Mode", "Easy", "Normal", "Hard" }));
+        comboBoxDifficulty.setBackground(new java.awt.Color(255, 102, 51));
+        comboBoxDifficulty.setFont(new java.awt.Font("Chiller", 3, 24)); // NOI18N
+        comboBoxDifficulty.setForeground(new java.awt.Color(255, 255, 255));
+        comboBoxDifficulty.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECT MODE", "EASY", "NORMAL", "HARD" }));
         comboBoxDifficulty.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxDifficultyActionPerformed(evt);
             }
         });
-        getContentPane().add(comboBoxDifficulty, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 140, 30));
-
-        TittleLabel.setFont(new java.awt.Font("Gill Sans Ultra Bold Condensed", 0, 48)); // NOI18N
-        TittleLabel.setForeground(new java.awt.Color(255, 255, 255));
-        TittleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        TittleLabel.setText("Buscaminas");
-        TittleLabel.setToolTipText("");
-        TittleLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        TittleLabel.setMaximumSize(new java.awt.Dimension(120, 30));
-        TittleLabel.setMinimumSize(new java.awt.Dimension(120, 30));
-        TittleLabel.setPreferredSize(new java.awt.Dimension(120, 30));
-        getContentPane().add(TittleLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 290, 70));
+        getContentPane().add(comboBoxDifficulty, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 280, 180, 40));
         getContentPane().add(FondoLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 500));
 
         pack();
@@ -179,7 +166,6 @@ public class Index extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnStartGame;
     private javax.swing.JLabel FondoLabel;
-    private javax.swing.JLabel TittleLabel;
     private javax.swing.JComboBox<String> comboBoxDifficulty;
     // End of variables declaration//GEN-END:variables
 }
