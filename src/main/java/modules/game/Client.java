@@ -54,6 +54,21 @@ public class Client {
         return null;
     }
     
+    public String requestRanking () {
+        JsonObject request = new JsonObject();
+        request.addProperty("action", "getranking");
+        out.println(request);
+        
+        try {
+            String response = in.readLine();
+            System.out.println(response);
+            return response;
+        }   catch (IOException e) {
+            System.err.println("Error al recibir la respuesta del servidor: " + e.getMessage());
+        }
+        return null;
+    }
+    
     /** Método para mandar una petición al servidor para revelar la celda con base
      * en la celda presionada 
      * @params int row, col: Fila y columna de la celda
@@ -92,7 +107,7 @@ public class Client {
             System.out.println("Tablero obtenido: ");
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
-                    System.out.print(board[i][j]);
+                    System.out.print(board[i][j] + " ");
                 }
                 
                 System.out.println();
@@ -124,7 +139,6 @@ public class Client {
                 return jsonObject.get("lose").getAsBoolean();
             }
         }
-        
         return false; 
     }
 }

@@ -22,7 +22,8 @@ public class ImageLoader {
             "/resources/3.png",
             "/resources/4.png",
             "/resources/5.png",
-            "/resources/bomba.png"
+            "/resources/bomba.png",
+            "/resources/flag.png"
         };
         
         for (String path : paths) {
@@ -87,5 +88,9 @@ public class ImageLoader {
     
     public Icon getImage(String path) {
         return mapIcons.get(path);
+    }
+    
+    public Icon getImageFlag () {
+        return mapIcons.get("/resources/flag.png");
     }
 }

@@ -91,7 +91,6 @@ public class Index extends javax.swing.JFrame {
 
         BtnStartGame = new javax.swing.JButton();
         comboBoxDifficulty = new javax.swing.JComboBox<>();
-        TittleLabel = new javax.swing.JLabel();
         FondoLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -124,17 +123,6 @@ public class Index extends javax.swing.JFrame {
             }
         });
         getContentPane().add(comboBoxDifficulty, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 140, 30));
-
-        TittleLabel.setFont(new java.awt.Font("Gill Sans Ultra Bold Condensed", 0, 48)); // NOI18N
-        TittleLabel.setForeground(new java.awt.Color(255, 255, 255));
-        TittleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        TittleLabel.setText("Buscaminas");
-        TittleLabel.setToolTipText("");
-        TittleLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        TittleLabel.setMaximumSize(new java.awt.Dimension(120, 30));
-        TittleLabel.setMinimumSize(new java.awt.Dimension(120, 30));
-        TittleLabel.setPreferredSize(new java.awt.Dimension(120, 30));
-        getContentPane().add(TittleLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 290, 70));
         getContentPane().add(FondoLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 500));
 
         pack();
@@ -146,9 +134,9 @@ public class Index extends javax.swing.JFrame {
         socketClient.connect();
         String jsonResponse = socketClient.sendMessageInitGame(selectedDifficulty);
         String board[][] = Client.getInstanceClient().getBoardJSON(jsonResponse);
-        
+        socketClient.requestRanking();
         if (board!= null) {
-            Game.getInstanceGame(board);
+            Game.getInstanceGame(board, selectedDifficulty);
             this.setVisible(false);
         }    
     }//GEN-LAST:event_BtnStartGameActionPerformed
@@ -179,7 +167,6 @@ public class Index extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnStartGame;
     private javax.swing.JLabel FondoLabel;
-    private javax.swing.JLabel TittleLabel;
     private javax.swing.JComboBox<String> comboBoxDifficulty;
     // End of variables declaration//GEN-END:variables
 }

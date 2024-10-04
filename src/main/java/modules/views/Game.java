@@ -27,6 +27,7 @@ public class Game extends javax.swing.JFrame {
     private CustomButton[][] buttons;
     private int rows;
     private int cols;
+    private String difficulty;
     
 
     private String gameEasyBgPath = "/resources/bg_game_easy.jpg";
@@ -38,11 +39,12 @@ public class Game extends javax.swing.JFrame {
     private Timer timer; // Temporizador.
     private int timeElapsed;
     
-    private Game(String[][] board) {
+    private Game(String[][] board, String difficulty) {
         this.board = board;
         this.rows = board.length;
         this.cols = board[0].length;
         this.timeElapsed = 0;
+        this.difficulty = difficulty;
         
         // Establecer el color del marco
         setUndecorated(false); 
@@ -54,9 +56,9 @@ public class Game extends javax.swing.JFrame {
         startClock();
     }
         
-    public static Game getInstanceGame (String[][] board) {
+    public static Game getInstanceGame (String[][] board, String difficulty) {
         if (instanceGame == null) {
-            instanceGame = new Game(board);
+            instanceGame = new Game(board, difficulty);
         }
         return instanceGame;
     }
@@ -83,7 +85,24 @@ public class Game extends javax.swing.JFrame {
                 
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                buttons[i][j] = new CustomButton(100, 100);               
+                System.out.print(i + ", " + j);
+                int dimensionX = 0, dimensionY = 0;
+                if (this.difficulty.equals("Easy")) {
+                    dimensionX = 80; 
+                    dimensionY = 80;
+                }
+                    
+                else if (this.difficulty.equals("Normal")) {
+                    dimensionX = 60; 
+                    dimensionY = 60;
+                }
+                    
+                if (this.difficulty.equals("Hard")) {
+                    dimensionX = 50; 
+                    dimensionY = 50;
+                }
+                            
+                buttons[i][j] = new CustomButton(dimensionX, dimensionY);               
                 int coordX = i;
                 int coordY = j;
                 
@@ -93,7 +112,6 @@ public class Game extends javax.swing.JFrame {
                         revealCell(coordX, coordY);
                     }
                 });
-                
                 tablero.add(buttons[i][j]);
             }
         }
@@ -103,7 +121,7 @@ public class Game extends javax.swing.JFrame {
         
         
         JPanel panelContainer = new JPanel(new BorderLayout());
-        panelContainer.setBorder(new EmptyBorder(20, 20, 20, 20)); // Margin de 20
+        panelContainer.setBorder(new EmptyBorder(10, 10, 10, 10)); // Margin de 20
         panelContainer.add(tablero, BorderLayout.CENTER);
 
         // Diseño del cronómetro calabaza

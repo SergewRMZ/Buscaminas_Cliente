@@ -14,8 +14,9 @@ public class CustomButton extends JButton {
     private Icon icon;
     private boolean pressed;
     private ImageLoader loader; // Instancia del cargador de imágenes
-    
+    private boolean flag;
     public CustomButton (int width, int height) {
+        this.flag = false;
         this.setPreferredSize(new Dimension(width, height));
         this.loader = ImageLoader.getIntanceImageLoader(width, height);
         this.icon = this.loader.getImageClosedCell();
@@ -33,8 +34,15 @@ public class CustomButton extends JButton {
            
            @Override
            public void mouseExited(MouseEvent e) {
-               
+               setBorder(null);
            }
+           
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
+                    toogleFlag();
+                }
+            }
         });
     }  
     
@@ -70,6 +78,20 @@ public class CustomButton extends JButton {
     
     public void updateCellFive () {
         this.icon = this.loader.getImageFive();
+        setIcon(this.icon);
+    }
+    
+    private void toogleFlag () {
+        if (this.flag) {
+            this.icon = this.loader.getImageClosedCell();
+            this.flag = false;
+        }
+        
+        else {
+            this.icon = this.loader.getImageFlag();
+            this.flag = true;
+        }
+        
         setIcon(this.icon);
     }
 }
