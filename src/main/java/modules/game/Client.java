@@ -3,6 +3,7 @@ import java.io.*;
 import java.net.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -61,9 +62,37 @@ public class Client {
         
         try {
             String response = in.readLine();
-            System.out.println(response);
-            return response;
-        }   catch (IOException e) {
+            JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
+            if (jsonObject.has("ranking") && jsonObject.get("ranking").isJsonArray()) {
+                JsonArray rankings = jsonObject.getAsJsonArray("ranking");
+                StringBuilder rankingBuilder = new StringBuilder("<html>Récords:<br>");
+                   
+                rankingBuilder.append("<table border='1' cellpadding='5' cellspacing='0'>");
+                rankingBuilder.append("<tr><th>Posición</th><th>Puntuación</th></tr>");
+                
+                int position = 1;
+                for (JsonElement ranking : rankings) {
+                    String score = ranking.getAsString();
+                    rankingBuilder.append("<tr>")
+                      .append("<td>").append(position).append("</td>")
+                      .append("<td>").append(score).append("</td>")
+                      .append("</tr>");
+                    
+                    position++;
+                }
+
+                rankingBuilder.append("</table></html>");
+                return rankingBuilder.toString(); // Devuelve el texto formateado
+            } 
+            
+            else {
+                if (jsonObject.has("status") && jsonObject.get("status").getAsString().equals("error")) {
+                    return null;
+                }
+            }
+        }   
+        
+        catch (IOException e) {
             System.err.println("Error al recibir la respuesta del servidor: " + e.getMessage());
         }
         return null;
@@ -140,5 +169,21 @@ public class Client {
             }
         }
         return false; 
+    }
+    
+    public void disconnect() {
+        try {
+            if (in != null)
+                in.close();
+            
+            if (out != null)
+                out.close();
+            
+            if (socket != null)
+                socket.close();
+            
+        }   catch(IOException e) {
+            System.err.println("Error al cerrar la conexión: " + e.getMessage());
+        }
     }
 }

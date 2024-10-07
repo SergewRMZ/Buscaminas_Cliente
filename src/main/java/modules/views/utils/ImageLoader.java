@@ -33,7 +33,7 @@ public class ImageLoader {
             if (image == null) 
                 System.out.println("No se pudo cargar la imagen " + path);
             else
-                mapIcons.put(path, new ImageIcon(image.getScaledInstance(width - 20, height - 20, Image.SCALE_SMOOTH)));
+                mapIcons.put(path, new ImageIcon(image.getScaledInstance(width - 10, height - 10, Image.SCALE_SMOOTH)));
         } 
     }
     
@@ -51,7 +51,7 @@ public class ImageLoader {
         if (image == null) {
             System.out.println("No se pudo cargar la imagen correctamente");
         }
-        return new ImageIcon(image.getScaledInstance(width - 20, height - 20, Image.SCALE_SMOOTH));
+        return new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH));
     }
     
     public Icon getImageClosedCell () {

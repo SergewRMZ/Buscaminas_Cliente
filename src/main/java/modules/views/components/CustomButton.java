@@ -12,6 +12,7 @@ import modules.views.utils.Colors;
 
 public class CustomButton extends JButton {
     private Icon icon;
+    private boolean revealed;
     private boolean pressed;
     private ImageLoader loader; // Instancia del cargador de imágenes
     private boolean flag;
@@ -26,17 +27,6 @@ public class CustomButton extends JButton {
         setBorderPainted(false);
         
         addMouseListener(new MouseAdapter() {
-           
-           @Override
-           public void mouseEntered(MouseEvent e) {
-               setBorder(BorderFactory.createLineBorder(Colors.PURPLE));
-           }
-           
-           @Override
-           public void mouseExited(MouseEvent e) {
-               setBorder(null);
-           }
-           
             @Override
             public void mousePressed(MouseEvent e) {
                 if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
@@ -49,49 +39,58 @@ public class CustomButton extends JButton {
     public void updateCellMine () {
         this.icon = this.loader.getImageMine();
         setIcon(this.icon);
+        this.revealed = true;
     }
     
     public void updateCellZero () {
         this.icon = this.loader.getImageZero();
         setIcon(this.icon);
+        this.revealed = true;
     }
     
     public void updateCellOne () {
         this.icon = this.loader.getImageOne();
         setIcon(this.icon);
+        this.revealed = true;
     }
     
     public void updateCellTwo () {
         this.icon = this.loader.getImageTwo();
         setIcon(this.icon);
+        this.revealed = true;
     }
     
     public void updateCellThree () {
         this.icon = this.loader.getImageThree();
         setIcon(this.icon);
+        this.revealed = true;
     }
     
     public void updateCellFour () {
         this.icon = this.loader.getImageFour();
         setIcon(this.icon);
+        this.revealed = true;
     }
     
     public void updateCellFive () {
         this.icon = this.loader.getImageFive();
         setIcon(this.icon);
+        this.revealed = true;
     }
     
     private void toogleFlag () {
-        if (this.flag) {
-            this.icon = this.loader.getImageClosedCell();
-            this.flag = false;
+        if (!this.revealed) {
+            if (this.flag) {
+                this.icon = this.loader.getImageClosedCell();
+                this.flag = false;
+            }
+
+            else {
+                this.icon = this.loader.getImageFlag();
+                this.flag = true;
+            }
+
+            setIcon(this.icon);
         }
-        
-        else {
-            this.icon = this.loader.getImageFlag();
-            this.flag = true;
-        }
-        
-        setIcon(this.icon);
     }
 }

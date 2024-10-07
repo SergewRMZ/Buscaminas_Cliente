@@ -2,24 +2,24 @@ package modules.views;
 
 import java.awt.Color;
 import java.awt.BorderLayout;
+import javax.swing.BoxLayout;
+import javax.swing.Box;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.OverlayLayout;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import modules.game.Client;
 import modules.views.components.CustomButton;
+import modules.views.utils.Colors;
 
 public class Game extends javax.swing.JFrame {
     private static Game instanceGame;
@@ -28,11 +28,10 @@ public class Game extends javax.swing.JFrame {
     private int rows;
     private int cols;
     private String difficulty;
-    
 
     private String gameEasyBgPath = "/resources/bg_game_easy.jpg";
-    private String win = "/resources/win.jpg";
     private String crono = "/resources/cronometer.png"; 
+    private String score = "/resources/score.png"; 
     
     private BoardPanel tablero;
     private JLabel clockLabel; // Etiqueta para mostrar el reloj.
@@ -50,12 +49,15 @@ public class Game extends javax.swing.JFrame {
         setUndecorated(false); 
         getRootPane().setBorder(javax.swing.BorderFactory.createLineBorder(Color.BLACK, 20));
         
+        startClock();
         createGame();
         setLocationRelativeTo(null);
         setVisible(true);
-        startClock();
     }
         
+    /** Patrón singleton para generar el juego.
+     * @param board[][]: Arreglo bidimensional que contiene el tablero del juego.
+     * @param difficulty: Dificultad del juego*/
     public static Game getInstanceGame (String[][] board, String difficulty) {
         if (instanceGame == null) {
             instanceGame = new Game(board, difficulty);
@@ -82,27 +84,22 @@ public class Game extends javax.swing.JFrame {
         tablero = new BoardPanel(this.gameEasyBgPath);
         tablero.setLayout(new GridLayout(this.rows, this.cols));
         buttons = new CustomButton[rows][cols];
-                
+        int x = 80;
+        int y = 80;
+        
+        if (this.difficulty.equals("HARD")) {
+            x = 40;
+            y = 40;
+        }
+        
+        else if (this.difficulty.equals("NORMAL")) {
+            x = 40;
+            y = 40;
+        }
+                  
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                System.out.print(i + ", " + j);
-                int dimensionX = 0, dimensionY = 0;
-                if (this.difficulty.equals("Easy")) {
-                    dimensionX = 80; 
-                    dimensionY = 80;
-                }
-                    
-                else if (this.difficulty.equals("Normal")) {
-                    dimensionX = 60; 
-                    dimensionY = 60;
-                }
-                    
-                if (this.difficulty.equals("Hard")) {
-                    dimensionX = 50; 
-                    dimensionY = 50;
-                }
-                            
-                buttons[i][j] = new CustomButton(dimensionX, dimensionY);               
+                buttons[i][j] = new CustomButton(x, y);               
                 int coordX = i;
                 int coordY = j;
                 
@@ -112,58 +109,77 @@ public class Game extends javax.swing.JFrame {
                         revealCell(coordX, coordY);
                     }
                 });
+                
                 tablero.add(buttons[i][j]);
             }
-        }
-        
-        tablero.revalidate();
-        tablero.repaint();
-        
+        }        
         
         JPanel panelContainer = new JPanel(new BorderLayout());
-        panelContainer.setBorder(new EmptyBorder(10, 10, 10, 10)); // Margin de 20
+        panelContainer.setBorder(new EmptyBorder(20, 20, 20, 0)); // Margin de 20
         panelContainer.add(tablero, BorderLayout.CENTER);
 
         // Diseño del cronómetro calabaza
-        JPanel clockPanel = new JPanel(new BorderLayout());  
+        JPanel clockPanel = new JPanel(new BorderLayout());
         ImageIcon pumpkinIcon = new ImageIcon(getClass().getResource(crono));
-        Image pumpkinImage = pumpkinIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);  
+        Image pumpkinImage = pumpkinIcon.getImage().getScaledInstance(300, 300, Image.SCALE_SMOOTH);
         JLabel clockImageLabel = new JLabel(new ImageIcon(pumpkinImage)); // Nueva imagen redimensionada
 
         // Establecer el alineamiento del JLabel de la imagen
         clockImageLabel.setHorizontalAlignment(JLabel.CENTER);
         clockImageLabel.setVerticalAlignment(JLabel.TOP);
-        
+
         // Crear un JPanel transparente para el tiempo digital
         JPanel overlayPanel = new JPanel();
-        overlayPanel.setOpaque(false); 
-        overlayPanel.setLayout(new BorderLayout()); 
+        overlayPanel.setOpaque(false);
+        overlayPanel.setLayout(new BorderLayout());
 
         // Configurar el JLabel del tiempo
         clockLabel = new JLabel();
         clockLabel.setFont(new Font("Arial", Font.BOLD, 40));
         clockLabel.setHorizontalAlignment(JLabel.CENTER);
-        clockLabel.setBorder(new EmptyBorder(150, 30, 30, 30)); 
+        clockLabel.setBorder(new EmptyBorder(150, 30, 30, 30));
         overlayPanel.add(clockLabel, BorderLayout.NORTH);
-        
+
         // Añadir el overlayPanel sobre la imagen del reloj
-        clockImageLabel.setLayout(new BorderLayout()); 
+        clockImageLabel.setLayout(new BorderLayout());
         clockImageLabel.add(overlayPanel, BorderLayout.CENTER);
-                
-        panelContainer.add(clockImageLabel, BorderLayout.EAST);
+
+        // Crear el score y añadirlo debajo del cronómetro
+        ImageIcon scoreIcon = new ImageIcon(getClass().getResource(score));
+        Image scoreImage = scoreIcon.getImage().getScaledInstance(300, 500, Image.SCALE_SMOOTH); 
+        JLabel scoreImageLabel = new JLabel(new ImageIcon(scoreImage));
+        scoreImageLabel.setLayout(new OverlayLayout(scoreImageLabel));
+        scoreImageLabel.setBorder(null);
+       
+        Client client = Client.getInstanceClient();
+        JLabel scoreText = new JLabel(client.requestRanking()); // Solicitar ranking del server
+        scoreText.setHorizontalAlignment(JLabel.CENTER);
+        scoreText.setFont(new Font("Harrington", Font.BOLD, 12));
+        scoreText.setForeground(Colors.ORANGE);
+        scoreText.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Espacio alrededor del texto
+        scoreImageLabel.add(scoreText);
+        
+        JPanel clockAndScorePanel = new JPanel();
+        clockAndScorePanel.setLayout(new BoxLayout(clockAndScorePanel, BoxLayout.Y_AXIS));
+        clockAndScorePanel.add(clockImageLabel);
+        clockAndScorePanel.add(Box.createVerticalStrut(3)); 
+        clockAndScorePanel.add(scoreImageLabel);
+
+        // Añadir el panel que contiene el cronómetro y el score al contenedor principal
+        panelContainer.add(clockAndScorePanel, BorderLayout.EAST);
 
         // Limpiar y añadir el nuevo contenido
         getContentPane().removeAll(); // Limpiar cualquier contenido previo
         add(panelContainer, BorderLayout.NORTH);
         pack(); // Ajustar tamaño ventana
 
-        revalidate(); // Refrescar la interfaz gráfica
+        revalidate(); 
         repaint();
     }
     
     /** Método para iniciar el cronómetro. */
     private void startClock() {
-        timer = new Timer(1000, new ActionListener() { // Crear un temporizador que se dispara cada segundo
+        timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 timeElapsed++;
@@ -172,16 +188,22 @@ public class Game extends javax.swing.JFrame {
         });
         timer.start(); // Iniciar el temporizador
     }
+    
+    private void stopClock () {
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+        }
+    }
 
     /** Método para actualizar la etiqueta del reloj. */
     private void updateClock() {
-    int minutes = timeElapsed / 60;
-    int seconds = timeElapsed % 60;
+        int minutes = timeElapsed / 60;
+        int seconds = timeElapsed % 60;
 
-    // Tiempo en formato MM:SS
-    String formattedTime = String.format("%02d:%02d", minutes, seconds);
-    this.clockLabel.setText(formattedTime);
-}
+        // Tiempo en formato MM:SS
+        String formattedTime = String.format("%02d:%02d", minutes, seconds);
+        this.clockLabel.setText(formattedTime);
+    }
     
     /** Método para revelar una celda del juego, se manda la solicitud al servidor y
      regresa la respuesta como JSON. */
@@ -235,19 +257,44 @@ public class Game extends javax.swing.JFrame {
         
         if (socketClient.getWin(jsonResponse)) {
             // Mostrar ventana de que ha ganado
-            System.out.println("Has ganado!");
+            showWinImage();
+            disableAllButtons();
+            stopClock();
         }
         
         else if (socketClient.getLose(jsonResponse)) {
-            // Mostrar ventana de que has perdido
-            System.out.println("Has perdido menso!");
+            showLoseImage();
+            disableAllButtons();
+            stopClock();
         }
         
         tablero.revalidate();
         tablero.repaint();
     }
     
+    private void showWinImage () {
+        WinScreen.getInstanceWin().setVisible(true);
+        Client client = Client.getInstanceClient();
+        client.disconnect();
+        this.setVisible(false);
+        instanceGame = null;
+    }
     
+    private void showLoseImage() {
+        LoseScreen.getInstanceGameOverScreen().setVisible(true);
+        Client client = Client.getInstanceClient();
+        client.disconnect(); // Desconectar el cliente
+        this.setVisible(false);
+        instanceGame = null;
+    }
+    
+    private void disableAllButtons () {
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                buttons[i][j].setEnabled(false);
+            }
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

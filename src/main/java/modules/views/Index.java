@@ -1,37 +1,47 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package modules.views;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Image;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
+import javax.swing.JList;
 import modules.game.Client;
+
+class CustomComboBoxRenderer extends DefaultListCellRenderer {
+
+    @Override
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        // Llamar al método de la superclase para mantener la funcionalidad predeterminada
+        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+        // Cambiar el color de fondo de los elementos
+        if (isSelected) {
+            setBackground(new Color(102, 0, 153)); // Color de fondo morado oscuro para el ítem seleccionado
+        } else {
+            setBackground(new Color(153, 102, 255)); // Color de fondo morado más claro para los ítems no seleccionados
+        }
+
+        // Establecer el color del texto para que sea visible con el fondo
+        setForeground(Color.WHITE);
+        return this;
+    }
+}
 
 public class Index extends javax.swing.JFrame {
     private static Index instance;
     private String logo = "/resources/index.png"; 
-    
     private Index() {
         initComponents();
         setLocationRelativeTo(null);
         setImageLabel(FondoLabel, "/resources/bg.jpg");
-        
+        comboBoxDifficulty.setRenderer(new CustomComboBoxRenderer());
         
         ImageIcon logoIcon = new ImageIcon(getClass().getResource(logo));
         if (logoIcon.getIconWidth() == -1) {
             System.err.println("Error: No se puede cargar la imagen desde la ruta: " + logo);
         } else {
-            // Obtener las dimensiones originales de la imagen
             int originalWidth = logoIcon.getIconWidth();
             int originalHeight = logoIcon.getIconHeight();
             
@@ -41,16 +51,10 @@ public class Index extends javax.swing.JFrame {
             // Redimensionar la imagen
             Image logoImage = logoIcon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
             JLabel logoLabel = new JLabel(new ImageIcon(logoImage)); // Crear el JLabel con la imagen redimensionada
-
-            // Establecer la posición del logo
             logoLabel.setBounds(30, 60, newWidth, newHeight); // Usar las nuevas dimensiones
-
-            // Añadir el logo sobre el FondoLabel
             FondoLabel.add(logoLabel);
         }
 
-
-        // Refrescar la interfaz
         revalidate(); // Refresca el diseño
         repaint(); // Repinta la ventana
     }
@@ -94,14 +98,13 @@ public class Index extends javax.swing.JFrame {
         FondoLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(500, 500));
         setName("Index"); // NOI18N
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BtnStartGame.setBackground(new java.awt.Color(51, 153, 255));
-        BtnStartGame.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
+        BtnStartGame.setBackground(new java.awt.Color(102, 102, 102));
+        BtnStartGame.setFont(new java.awt.Font("Chiller", 3, 48)); // NOI18N
         BtnStartGame.setForeground(new java.awt.Color(255, 255, 255));
-        BtnStartGame.setText("Jugar");
+        BtnStartGame.setText("Start\n");
         BtnStartGame.setBorder(null);
         BtnStartGame.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         BtnStartGame.setEnabled(false);
@@ -111,18 +114,18 @@ public class Index extends javax.swing.JFrame {
                 BtnStartGameActionPerformed(evt);
             }
         });
-        getContentPane().add(BtnStartGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 410, 150, 40));
+        getContentPane().add(BtnStartGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 350, 180, 40));
 
-        comboBoxDifficulty.setBackground(new java.awt.Color(255, 255, 255));
-        comboBoxDifficulty.setFont(new java.awt.Font("Consolas", 1, 14)); // NOI18N
-        comboBoxDifficulty.setForeground(new java.awt.Color(0, 0, 0));
-        comboBoxDifficulty.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Mode", "Easy", "Normal", "Hard" }));
+        comboBoxDifficulty.setBackground(new java.awt.Color(255, 102, 51));
+        comboBoxDifficulty.setFont(new java.awt.Font("Chiller", 3, 24)); // NOI18N
+        comboBoxDifficulty.setForeground(new java.awt.Color(255, 255, 255));
+        comboBoxDifficulty.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECT MODE", "EASY", "NORMAL", "HARD" }));
         comboBoxDifficulty.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxDifficultyActionPerformed(evt);
             }
         });
-        getContentPane().add(comboBoxDifficulty, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 140, 30));
+        getContentPane().add(comboBoxDifficulty, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 280, 180, 40));
         getContentPane().add(FondoLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 500));
 
         pack();
@@ -134,7 +137,7 @@ public class Index extends javax.swing.JFrame {
         socketClient.connect();
         String jsonResponse = socketClient.sendMessageInitGame(selectedDifficulty);
         String board[][] = Client.getInstanceClient().getBoardJSON(jsonResponse);
-        socketClient.requestRanking();
+        
         if (board!= null) {
             Game.getInstanceGame(board, selectedDifficulty);
             this.setVisible(false);
@@ -146,10 +149,9 @@ public class Index extends javax.swing.JFrame {
 
         String selectedDifficulty = (String) comboBoxDifficulty.getSelectedItem();
         if (selectedDifficulty != null && !selectedDifficulty.isEmpty() && !selectedDifficulty.contains("Selected Mode"))
-        BtnStartGame.setEnabled(true); // Habilitar el botón
+            BtnStartGame.setEnabled(true); // Habilitar el botón
         else
-        BtnStartGame.setEnabled(false); // Deshabilitar el botón si no hay selección
-
+            BtnStartGame.setEnabled(false); // Deshabilitar el botón si no hay selección
     }//GEN-LAST:event_comboBoxDifficultyActionPerformed
     
     /* Método para obtener el tablero que viene en la response del servidor */

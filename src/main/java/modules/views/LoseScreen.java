@@ -1,45 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package modules.views;
-
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
-import modules.views.utils.Colors;
 import modules.views.utils.ImageLoader;
-/**
- *
- * @author serge
- */
-public class WinScreen extends javax.swing.JFrame {
-    private static WinScreen instance;
+public class LoseScreen extends javax.swing.JFrame {
+    private static LoseScreen instance;
     
-    public WinScreen() {
-        setUndecorated(true);
+    public LoseScreen() {
+        setUndecorated(true); // Quitar decoraciones estándar
+        initComponents();
+        setLocationRelativeTo(null);
         setSize(600, 600);
         setTransparentBackground();
-        initComponents();
-        LabelWin.setIcon(ImageLoader.setImageLabel("/resources/win.jpg", 600, 600));
-        LabelWin.repaint();
-        setLocationRelativeTo(null);
-        BtnRestartGame.setForeground(Colors.ORANGE);
-        
-        BtnRestartGame.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                BtnRestartGame.setBackground(Colors.ORANGE);
-                BtnRestartGame.setForeground(Colors.BLACK);
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                BtnRestartGame.setBackground(Colors.BLACK);
-                BtnRestartGame.setForeground(Colors.ORANGE);
-            }
-        });
+        LabelGameOver.setIcon(ImageLoader.setImageLabel("/resources/over.png", 400, 400));
+        LabelGameOver.repaint();
     }
     
     private void setTransparentBackground () {
@@ -48,11 +21,10 @@ public class WinScreen extends javax.swing.JFrame {
         this.setBackground(new Color(0, 0, 0, 0));
     }
     
-    public static WinScreen getInstanceWin () {
+    public static LoseScreen getInstanceGameOverScreen () {
         if (instance == null) {
-            instance = new WinScreen();
+            instance = new LoseScreen();
         }
-        
         return instance;
     }
 
@@ -66,13 +38,14 @@ public class WinScreen extends javax.swing.JFrame {
     private void initComponents() {
 
         BtnRestartGame = new javax.swing.JButton();
-        LabelWin = new javax.swing.JLabel();
+        LabelGameOver = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(0, 0, 0));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BtnRestartGame.setBackground(new java.awt.Color(0, 0, 0));
-        BtnRestartGame.setFont(new java.awt.Font("Harrington", 1, 36)); // NOI18N
+        BtnRestartGame.setBackground(new java.awt.Color(153, 51, 255));
+        BtnRestartGame.setFont(new java.awt.Font("Harrington", 1, 24)); // NOI18N
         BtnRestartGame.setForeground(new java.awt.Color(255, 153, 51));
         BtnRestartGame.setText("Restart Game");
         BtnRestartGame.setBorder(null);
@@ -83,8 +56,8 @@ public class WinScreen extends javax.swing.JFrame {
                 BtnRestartGameActionPerformed(evt);
             }
         });
-        getContentPane().add(BtnRestartGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 540, 280, 60));
-        getContentPane().add(LabelWin, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 110, 600, 600));
+        getContentPane().add(BtnRestartGame, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 360, 160, 50));
+        getContentPane().add(LabelGameOver, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, 400, 400));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -112,26 +85,28 @@ public class WinScreen extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(WinScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoseScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(WinScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoseScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(WinScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoseScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(WinScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoseScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new WinScreen().setVisible(true);
+                new LoseScreen().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnRestartGame;
-    private javax.swing.JLabel LabelWin;
+    private javax.swing.JLabel LabelGameOver;
     // End of variables declaration//GEN-END:variables
+
 }
+
